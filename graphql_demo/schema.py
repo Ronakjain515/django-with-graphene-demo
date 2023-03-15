@@ -1,8 +1,6 @@
 import graphene
 from .models import Product, Category
 from graphene_django.types import DjangoObjectType
-from .serializers import ProductSerializer, CategorySerializer
-from graphene_django.rest_framework.mutation import SerializerMutation
 
 
 class ProductType(DjangoObjectType):
@@ -16,6 +14,9 @@ class CategoryType(DjangoObjectType):
 
 
 class Query(object):
+	"""
+	Class for creating Query object.
+	"""
 	all_products = graphene.List(ProductType)
 	product = graphene.Field(ProductType, id=graphene.ID())
 
@@ -40,7 +41,9 @@ class Query(object):
 
 
 class CreateProduct(graphene.Mutation):
-	# Let's define the arguments we can pass the create method
+	"""
+	Class for creating products.
+	"""
 	class Arguments:
 		name = graphene.String()
 		price = graphene.String()
@@ -78,11 +81,13 @@ class CreateProduct(graphene.Mutation):
 
 
 class UpdateProduct(graphene.Mutation):
-	# The input arguments for this mutation
+	"""
+	Class for updating product.
+	"""
 	class Arguments:
 		id = graphene.ID()
 		name = graphene.String()
-		price = graphene.Float()
+		price = graphene.String()
 		category = graphene.List(graphene.ID)
 		in_stock = graphene.Boolean()
 		date_created = graphene.types.datetime.DateTime()
@@ -90,8 +95,8 @@ class UpdateProduct(graphene.Mutation):
 	# Let's define the response of the mutation
 	product = graphene.Field(ProductType)
 
-	def mutate(self, _info, _id, name=None, price=None, category=None, in_stock=None, date_created=None):
-		product = Product.objects.get(pk=_id)
+	def mutate(self, info, id, name=None, price=None, category=None, in_stock=None, date_created=None):
+		product = Product.objects.get(pk=id)
 		product.name = name if name is not None else product.name
 		product.price = price if price is not None else product.price
 		product.in_stock = in_stock if in_stock is not None else product.in_stock
@@ -111,6 +116,9 @@ class UpdateProduct(graphene.Mutation):
 
 
 class DeleteProduct(graphene.Mutation):
+	"""
+	Class for deleting product.
+	"""
 	class Arguments:
 		# The input arguments for this mutation
 		id = graphene.ID()
@@ -118,21 +126,24 @@ class DeleteProduct(graphene.Mutation):
 	# The class attributes define the response of the mutation
 	product = graphene.Field(ProductType)
 
-	def mutate(self, _info, _id):
-		product = Product.objects.get(pk=_id)
+	def mutate(self, info, id):
+		product = Product.objects.get(pk=id)
 		if product is not None:
 			product.delete()
 		return DeleteProduct(product=product)
 
 
 class CreateCategory(graphene.Mutation):
+	"""
+	Class for creating category.
+	"""
 	class Arguments:
 		# The input arguments for this mutation
 		name = graphene.String()
 
 	category = graphene.Field(CategoryType)
 
-	def mutate(self, _info, name):
+	def mutate(self, info, name):
 		category = Category.objects.create(
 			name=name
 		)
@@ -143,6 +154,9 @@ class CreateCategory(graphene.Mutation):
 
 
 class UpdateCategory(graphene.Mutation):
+	"""
+	Class for updating category.
+	"""
 	class Arguments:
 		# The input arguments for this mutation
 		id = graphene.ID()
@@ -160,6 +174,9 @@ class UpdateCategory(graphene.Mutation):
 
 
 class DeleteCategory(graphene.Mutation):
+	"""
+	Class for deleting category.
+	"""
 	class Arguments:
 		# The input arguments for this mutation
 		id = graphene.ID()
@@ -176,15 +193,11 @@ class DeleteCategory(graphene.Mutation):
 		return DeleteCategory(category=category)
 
 
-class CreateProductMutation(SerializerMutation):
-	class Meta:
-		serializer_class = ProductSerializer
-		model_operations = ['create', 'update']
-		lookup_field = 'id'
-
-
 class Mutation(graphene.ObjectType):
-	create_product = CreateProductMutation.Field()
+	"""
+	Class for specifying all mutation.
+	"""
+	create_product = CreateProduct.Field()
 	update_product = UpdateProduct.Field()
 	delete_product = DeleteProduct.Field()
 

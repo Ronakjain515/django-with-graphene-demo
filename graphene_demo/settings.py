@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import django
+from django.utils.encoding import force_str
+
+django.utils.encoding.force_text = force_str
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,7 +32,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 GRAPHENE = {
-    "SCHEMA": "demo.schema.schema"
+    "SCHEMA": "graphene_demo.schema.schema"
 }
 
 # Application definition
@@ -43,7 +47,8 @@ INSTALLED_APPS = [
 
     'graphene_django',
     'rest_framework',
-    'graphql_demo'
+    'graphql_demo',
+    'django_filters'
 ]
 
 MIDDLEWARE = [

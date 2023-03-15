@@ -1,14 +1,14 @@
 import graphene
-from graphql_demo import schema
+import graphql_demo.schema
 
 
-class Query(schema.Query, graphene.ObjectType):
+class Query(graphql_demo.schema.Query, graphene.ObjectType):
     # This class will inherit from multiple Queries
     # as we begin to add more apps to our project
     pass
 
 
-class Mutation(schema.Mutation, graphene.ObjectType):
+class Mutation(graphql_demo.schema.Mutation, graphene.ObjectType):
     pass
 
 
